@@ -1,0 +1,9 @@
+{
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    // Controls if the diff editor shows changes in leading or trailing whitespace as diffs
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+}

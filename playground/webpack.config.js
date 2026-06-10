@@ -25,11 +25,6 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /LanguageServiceWorker.js$/,
-                include: [path.resolve(__dirname, "./src/language_service_worker")],
-                use: { loader: 'worker-loader' },
-            },
-            {
                 test: /\.(js|jsx|tsx|ts)$/,
                 exclude: /node_modules/,
                 use: [

@@ -154,7 +154,7 @@ export class CSAntlrParseService {
         }
 
         const ast = this.Parse(input, LanguageServiceFeature.ErrorDetection, false, false);
-        this.syntaxErrors.push(...(new CSLSUnsupportedError(unsupportedStatements, this.GetAllRuleNames())).getUnsupportedErrors(ast));
+        this.syntaxErrors.push(...(new CSLSUnsupportedError(unsupportedStatements ?? [], this.GetAllRuleNames())).getUnsupportedErrors(ast));
         this._incrementalParsingCache.updateSyntaxErrorsPosition(this.cachedScript.get(LanguageServiceFeature.ErrorDetection), this.syntaxErrors);
         return this.syntaxErrors;
     }

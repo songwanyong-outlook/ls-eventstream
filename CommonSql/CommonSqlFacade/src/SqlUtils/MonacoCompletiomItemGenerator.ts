@@ -53,7 +53,7 @@ export const mapToMonacoCompletionItem = (item: CommonSqlCompletionItem): langua
             break;
         case CommonSqlCompletionItemType.Index:
             _type = languages.CompletionItemKind.Constant;
-            break;
+            break;            
         case CommonSqlCompletionItemType.Snippet:
             _type = languages.CompletionItemKind.Snippet;
             break;

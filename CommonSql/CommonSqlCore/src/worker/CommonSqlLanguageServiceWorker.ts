@@ -17,20 +17,27 @@ onmessage = (event: MessageEvent) => {
         languageServiceConfig = languageServiceMsg as ILanguageServiceConfig;
     } else {
         const languageServiceRequest = languageServiceMsg as ILanguageServiceRequest;
-        let languageServiceResults = CommonSqlLanguageServicePipeline.instance(languageServiceConfig).handleServiceRequest(languageServiceRequest);
-        languageServiceResults = languageServiceResults == null ? processNullResult(languageServiceRequest) : languageServiceResults;
-        postMessage(languageServiceResults, undefined);        
+        const languageServiceResults = CommonSqlLanguageServicePipeline.instance(languageServiceConfig)
+            .handleServiceRequest(languageServiceRequest);
+
+        postMessage(languageServiceResults ?? processNullResult(languageServiceRequest.reason), undefined);        
     }
 };
 
-function processNullResult(languageServiceRequest: ILanguageServiceRequest) {
-    if (languageServiceRequest.reason === LanguageServiceFeature.WordCompletion) {
-        return [];
-    } else if (languageServiceRequest.reason === LanguageServiceFeature.QuickInfo || languageServiceRequest.reason === LanguageServiceFeature.ErrorDetection) {
-        return "";
-    } else if (languageServiceRequest.reason === LanguageServiceFeature.SignatureHelp) {
-        return { signatures: [],  activeParameter: -1 } as ISignatureHelp;
-    } else {
-        return null;
+function processNullResult(reason: LanguageServiceFeature) {
+    switch (reason) {
+        case LanguageServiceFeature.WordCompletion:
+        case LanguageServiceFeature.ErrorDetection:
+        case LanguageServiceFeature.AutoFormat:
+        case LanguageServiceFeature.CodeFolding:
+        case LanguageServiceFeature.CodeAction:
+        case LanguageServiceFeature.Custom:
+            return [];
+        case LanguageServiceFeature.QuickInfo:
+            return "";
+        case LanguageServiceFeature.SignatureHelp:
+            return { signatures: [],  activeParameter: -1 } as ISignatureHelp;
+        default:
+            return null;
     }
 }

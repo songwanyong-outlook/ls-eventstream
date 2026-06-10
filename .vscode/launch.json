@@ -1,0 +1,243 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "pwa-chrome",
+            "request": "launch",
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:8000",
+            "webRoot": "${workspaceFolder}/playground"
+        },
+        {
+            "name": "Debug All Jest Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+              "--inspect-brk",
+              "node_modules/jest/bin/jest.js",
+              "--runInBand",
+              "--config",
+              "engineering/test/jest.config.js",
+              "--verbose",
+            ],
+            "cwd": "${workspaceRoot}/CommonSql",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "port": 9229
+        },
+        {
+          "name": "Debug Unit Tests",
+          "type": "node",
+          "request": "launch",
+          "runtimeArgs": [
+            "--inspect-brk",
+            "node_modules/jest/bin/jest.js",
+            "--runInBand",
+            "--config",
+            "engineering/test/jest.config.js",
+            "engineering/test/unit",
+            "--verbose",
+            "--coverage",
+          ],
+          "cwd": "${workspaceRoot}/CommonSql",
+          "console": "integratedTerminal",
+          "internalConsoleOptions": "neverOpen",
+          "port": 9229
+        },
+        {
+          "name": "Debug WordCompletion Tests",
+          "type": "node",
+          "request": "launch",
+          "runtimeArgs": [
+            "--inspect-brk",
+            "node_modules/jest/bin/jest.js",
+            "--runInBand",
+            "--config",
+            "engineering/test/jest.config.js",
+            "engineering/test/integration/WordCompletion",
+            "--verbose",
+          ],
+          "cwd": "${workspaceRoot}/CommonSql",
+          "console": "integratedTerminal",
+          "internalConsoleOptions": "neverOpen",
+          "port": 9229
+        },
+        {
+          "name": "Debug ErrorDetection Tests",
+          "type": "node",
+          "request": "launch",
+          "runtimeArgs": [
+            "--inspect-brk",
+            "node_modules/jest/bin/jest.js",
+            "--runInBand",
+            "--config",
+            "engineering/test/jest.config.js",
+            "engineering/test/integration/ErrorDetection",
+            "--verbose",
+          ],
+          "cwd": "${workspaceRoot}/CommonSql",
+          "console": "integratedTerminal",
+          "internalConsoleOptions": "neverOpen",
+          "port": 9229
+        },
+        {
+            "name": "Debug QuickInfo Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+              "--inspect-brk",
+              "node_modules/jest/bin/jest.js",
+              "--runInBand",
+              "--config",
+              "engineering/test/jest.config.js",
+              "engineering/test/integration/QuickInfo",
+              "--verbose",
+            ],
+            "cwd": "${workspaceRoot}/CommonSql",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "port": 9229
+        },
+        {
+            "name": "Debug Signature Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+              "--inspect-brk",
+              "node_modules/jest/bin/jest.js",
+              "--runInBand",
+              "--config",
+              "engineering/test/jest.config.js",
+              "engineering/test/integration/SignatureHelp",
+              "--verbose",
+            ],
+            "cwd": "${workspaceRoot}/CommonSql",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "port": 9229
+        },
+        {
+            "name": "Debug OutputScheama Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+              "--inspect-brk",
+              "node_modules/jest/bin/jest.js",
+              "--runInBand",
+              "--config",
+              "engineering/test/jest.config.js",
+              "engineering/test/integration/OutputSchema",
+              "--verbose",
+            ],
+            "cwd": "${workspaceRoot}/CommonSql",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "port": 9229
+        },
+        {
+            "name": "Debug GotoDefinition Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+              "--inspect-brk",
+              "node_modules/jest/bin/jest.js",
+              "--runInBand",
+              "--config",
+              "engineering/test/jest.config.js",
+              "engineering/test/integration/GotoDefinition",
+              "--verbose",
+            ],
+            "cwd": "${workspaceRoot}/CommonSql",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "port": 9229
+        },
+        {
+            "name": "Debug GotoReferences Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+              "--inspect-brk",
+              "node_modules/jest/bin/jest.js",
+              "--runInBand",
+              "--config",
+              "engineering/test/jest.config.js",
+              "engineering/test/integration/GotoReferences",
+              "--verbose",
+            ],
+            "cwd": "${workspaceRoot}/CommonSql",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "port": 9229
+        },
+        {
+            "name": "Debug CodeFormatting Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+              "--inspect-brk",
+              "node_modules/jest/bin/jest.js",
+              "--runInBand",
+              "--config",
+              "engineering/test/jest.config.js",
+              "engineering/test/integration/CodeFormatting",
+              "--verbose",
+            ],
+            "cwd": "${workspaceRoot}/CommonSql",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "port": 9229
+        },
+        {
+            "name": "Debug CodeFolding Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+              "--inspect-brk",
+              "node_modules/jest/bin/jest.js",
+              "--runInBand",
+              "--config",
+              "engineering/test/jest.config.js",
+              "engineering/test/integration/CodeFolding",
+              "--verbose",
+            ],
+            "cwd": "${workspaceRoot}/CommonSql",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "port": 9229
+        },
+        {
+            "name": "Debug CodeAction Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+              "--inspect-brk",
+              "node_modules/jest/bin/jest.js",
+              "--runInBand",
+              "--config",
+              "engineering/test/jest.config.js",
+              "engineering/test/integration/CodeAction",
+              "--verbose",
+            ],
+            "cwd": "${workspaceRoot}/CommonSql",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "port": 9229
+        },
+        {
+          "name": "Decrypt Model",
+          "type": "node",
+          "request": "launch",
+          "runtimeArgs": [
+            "engineering/tool/IntellicodeModel/ModelDecrypter.ts",
+          ],
+          "cwd": "${workspaceRoot}/CommonSql",
+          "console": "integratedTerminal",
+          "internalConsoleOptions": "neverOpen",
+          "port": 9229
+      }
+    ]
+}

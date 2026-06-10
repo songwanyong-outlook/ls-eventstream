@@ -1,3 +1,4 @@
+import { BuiltinFunctions } from "@CommonSqlCore/src/language-service/metadata/BuiltinFunctions";
 import { ISignatureHelp } from "@CommonSqlUtils/SignatureTypes";
 
 export interface ISignatureHelpTestCase {
@@ -5,29 +6,28 @@ export interface ISignatureHelpTestCase {
     expected: ISignatureHelp;
 }
 
-export const signatureHelpTestCases: ISignatureHelpTestCase[] = 
-[{
-    partialScript: "SELECT COUNT(",
-    expected: {
-        signatures: [{
-            name: "COUNT",
-            label: "COUNT ( [ALL | DISTINCT] expression)",
-            documentation: "Returns the number of items in a group. COUNT always returns a bigint data type value.",
-            parameters: [{
-                label: "expression",
-                documentation: "Is an expression of any type or a column name. Aggregate functions and sub queries are not permitted.",
-            }],
-            example: "COUNT (1)",
+export const signatureHelpTestCases: ISignatureHelpTestCase[] =
+    BuiltinFunctions
+        .filter(func => !func.name.startsWith("SYSTEM."))
+        .map((builtinFunction) => {
+            return {
+                partialScript: builtinFunction.name + "(",
+                expected: {
+                    signatures: BuiltinFunctions.filter(func => func.name === builtinFunction.name),
+                    activeParameter: 0,
+                },
+            };
+        })
+        .concat([{
+            partialScript: "SELECT Count(*) FROM input1 GROUP BY TumblingWindow(second,",
+            expected: {
+                signatures: BuiltinFunctions.filter(func => func.name === "TUMBLINGWINDOW"),
+                activeParameter: 1,
+            }
         }, {
-            name: "count",
-            label: "COUNT (*)",
-            documentation: "Returns the number of items in a group. COUNT always returns a bigint data type value.",
-            parameters: [{
-                label: '*',
-                documentation: "Specifies that all events should be counted to return the total number of events in a group. COUNT(*) takes no parameters. COUNT(*) does not require an expression parameter because, by definition, it does not use information about any particular column. COUNT(*) returns the number of events without getting rid of duplicates. It counts each event separately. This includes events that contain null values.",
-            }],
-            example: "COUNT (*)",
-        }],
-        activeParameter: 0,
-    },
-}];
+            partialScript: "SELECT Count(*) FROM input1 GROUP BY Tumbling(second, 15, ",
+            expected: {
+                signatures: BuiltinFunctions.filter(func => func.name === "TUMBLING"),
+                activeParameter: 2,
+            }
+        }]);

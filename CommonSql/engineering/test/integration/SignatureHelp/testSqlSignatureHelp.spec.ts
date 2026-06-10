@@ -4,7 +4,6 @@ import { CSAntlrParseService } from "@CommonSqlCore/src/language-service/Parser/
 import { CommonSqlLanguageServicePipeline } from "@CommonSqlCore/src/pipeline/CommonSqlLanguageServicePipeline";
 import { ILanguageServiceRequest, LanguageServiceFeature } from "@CommonSqlUtils/Utils";
 
-import { builtinFunctions } from "@engineering/test/common/SqlFakedBuiltinFunctions";
 import { signatureHelpTestCases } from './sqlSignatureHelpTestCases';
 
 describe("test SQL SignatureHelp", () => {
@@ -26,7 +25,6 @@ describe("test SQL SignatureHelp", () => {
 
         const result = CommonSqlLanguageServicePipeline.instance({
             caseSensitive: false,
-            builtinFunctions,
         }).handleServiceRequest(request, true);
         const signatureHelp = result as string;
 

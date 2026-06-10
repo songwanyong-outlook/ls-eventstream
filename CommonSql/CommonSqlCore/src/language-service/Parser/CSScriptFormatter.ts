@@ -1,4 +1,5 @@
 import { Vocabulary } from "antlr4ts/Vocabulary";
+import { CommonSqlCompletionItem } from "../../../../CommonSqlUtils/CommonSqlCompletionItem";
 
 export interface ITokenInfo {
     tokenNumber: number;
@@ -9,6 +10,33 @@ interface INonReservedKeywordInfo {
     nonReservedKeywordsStateIndex: number;
     nonReservedKeywordTopIndex: number;
     nonReservedKeywordBottomIndex: number;
+}
+
+interface ISpecialKeyword {
+    PreKeyword: string;
+    KeywordText: string;
+    KeywordShown: string;
+    PostKeyword: string;
+};
+
+const SpecialKeywords = new Map<string, ISpecialKeyword>([
+    // AFTER MATCH SKIP TO NEXT ROW
+    ["AFTER",  { PreKeyword: "", KeywordText: "AFTER", KeywordShown: "AFTER MATCH SKIP TO NEXT ROW", PostKeyword: "MATCH" }],
+    ["MATCH", { PreKeyword: "AFTER", KeywordText: "MATCH", KeywordShown: "MATCH SKIP TO NEXT ROW", PostKeyword: "TOKENSKIP" }],
+    ["TOKENSKIP", { PreKeyword: "MATCH", KeywordText: "TOKENSKIP", KeywordShown: "SKIP TO NEXT ROW", PostKeyword: "TO" }],
+    ["NEXT", { PreKeyword: "TO", KeywordText: "NEXT", KeywordShown: "NEXT ROW", PostKeyword: "ROW" }],
+    ["ROW", { PreKeyword: "NEXT", KeywordText: "ROW", KeywordShown: "ROW", PostKeyword: "" }],
+    // PARTITION BY
+    ["PARTITION", { PreKeyword: "", KeywordText: "PARTITION", KeywordShown: "PARTITION BY", PostKeyword: "BY" }],
+    // TIMESTAMP BY
+    ["TIMESTAMP", { PreKeyword: "", KeywordText: "TIMESTAMP", KeywordShown: "TIMESTAMP BY", PostKeyword: "BY" }],
+    // LIMIT DURATION
+    ["LIMIT", { PreKeyword: "", KeywordText: "LIMIT", KeywordShown: "LIMIT DURATION", PostKeyword: "DURATION" }],
+    ["DURATION", { PreKeyword: "LIMIT", KeywordText: "DURATION", KeywordShown: "DURATION", PostKeyword: "" }]
+]);
+
+export function MapSpecialKeyword(keyword: string): string {
+    return SpecialKeywords.has(keyword) ? SpecialKeywords.get(keyword).KeywordShown : keyword;
 }
 
 export class CSScriptFormatter {

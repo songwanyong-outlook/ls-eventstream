@@ -8,6 +8,14 @@ export function notDuplicate(item, pos, self): boolean {
     return self.indexOf(item) === pos;
 }
 
+export function stringEquals(a: string, b: string): boolean {
+    if (!a || !b) {
+        return false;
+    }
+
+    return a.toUpperCase() === b.toUpperCase();
+}
+
 export function trimInputForWordCompletion(input: string): string {
     if (!input) {
         return input;

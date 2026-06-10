@@ -4,8 +4,9 @@ import { ISignatureInformation } from "../../../CommonSqlUtils/SignatureTypes";
 import { ILanguageGrammarRuleName, ISnippet } from "../../../CommonSqlUtils/Utils";
 import { ISyntaxHighlight } from "../SqlUtils/MonarchRuleGenerator";
 
-export function IsInSpecialContext(text: string, languageName: string): boolean {
-    const specialTokenTags = ["comment", "string", "identifier.quote"];
+export function IsInSpecialContext(text: string, languageName: string, includeQuotedId: boolean = true): boolean {
+    const commentAndString = ["comment", "string"];
+    const specialTokenTags = includeQuotedId ? commentAndString.concat(["identifier.quote"]) : commentAndString;
 
     try {
         const tokens = monaco.editor.tokenize(text, languageName);
@@ -18,6 +19,51 @@ export function IsInSpecialContext(text: string, languageName: string): boolean 
     } catch {
         return false;
     }
+}
+
+export function GetHoverWord(column: number, lineText: string, language: string, tokenPostfix: string): string {
+    const tokenss = monaco.editor.tokenize(lineText, language);
+        
+    // tokens is an array of arrays, where each inner array represents a line of tokens
+    if (tokenss.length > 0 && tokenss[tokenss.length - 1].length > 0) {
+        let hoverToken: monaco.Token = null;
+        let startOffset = 0;
+        let endOffset;
+
+        const tokens: monaco.Token[] = tokenss.pop();
+        for (let index = 0; index < tokens.length; index++) {
+            const token = tokens[index];
+            startOffset = token.offset; // 0-based
+
+            if (index < tokens.length - 1) {
+                endOffset  = tokens[index + 1].offset; // 0-based
+            } else {
+                endOffset = lineText.length;
+            }
+            
+            if (startOffset + 1 <= column && endOffset + 1 > column) {
+                hoverToken = token;
+                break;
+            }
+        }
+
+        if (!hoverToken) {
+            return null;
+        }
+
+        const speicalTokens = ["comment", "string", "number", "white"];
+
+        if (hoverToken.type === "identifier.quote" + tokenPostfix) {
+            // remove the surrounding quotes
+            return lineText.substring(startOffset + 1, endOffset - 1);
+        } else if (speicalTokens.map(token => token + tokenPostfix).includes(hoverToken.type)) {
+            return null;
+        } else {
+            return lineText.substring(startOffset, endOffset);
+        }         
+    }
+
+    return null;
 }
 
 export interface LanguageServiceConfig {

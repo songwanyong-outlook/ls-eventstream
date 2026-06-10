@@ -3,7 +3,7 @@
 // -----------------------------------------------------------------------------
 
 import { intellisenseFakedPrefix } from "../../../../CommonSqlUtils/CommonSqlCompletionItem";
-import { IMetadataObject } from "../../../../CommonSqlUtils/MetadataTypes";
+import { IMetadataObject, IMetadataType } from "../../../../CommonSqlUtils/MetadataTypes";
 
 export const generateDocumentationMarkdown = (metadataObject: IMetadataObject, renderColumnsForStar: boolean): string => {
     let retMarkdown = "";
@@ -38,7 +38,7 @@ export const generateDocumentationMarkdown = (metadataObject: IMetadataObject, r
         }
     }
 
-    if (metadataObject.type === "Table" || metadataObject.type === "View") {
+    if (metadataObject.type === IMetadataType.Table || metadataObject.type === IMetadataType.View) {
         if (renderColumnsForStar) {
             retMarkdown = `Selecting all columns from \`${metadataObject.name}\`  \n`;
         }

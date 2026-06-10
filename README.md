@@ -1,8 +1,6 @@
 # Introduction 
 Language Service is a common language service framework which can provide language service experience such as intellisense, syntax highlight, error detection, quick info and signature in trident.
 
-<!-- Last updated: October 2025 -->
-
 # Prerequisites
 - Node.js including NPM
 - Java Runtime Environment(JRE) required by antlr4ts

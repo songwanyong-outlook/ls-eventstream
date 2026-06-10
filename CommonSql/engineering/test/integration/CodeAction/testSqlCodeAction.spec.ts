@@ -2,7 +2,7 @@ import * as cliProgress from "cli-progress";
 
 import { CSAntlrParseService } from "@CommonSqlCore/src/language-service/Parser/CSAntlrParseService";
 import { CommonSqlLanguageServicePipeline } from "@CommonSqlCore/src/pipeline/CommonSqlLanguageServicePipeline";
-import { ILanguageServiceRequest, LanguageServiceFeature } from "@CommonSqlUtils/Utils";
+import { ICodeActionInfo, ILanguageServiceRequest, LanguageServiceFeature } from "@CommonSqlUtils/Utils";
 
 import { builtinFunctions } from "@engineering/test/common/SqlFakedBuiltinFunctions";
 import { testGrammarRuleNames } from '@engineering/common/SqlFakedConfig';
@@ -35,11 +35,14 @@ describe("test SQL CodeAction", () => {
             caseSensitive: false,
             grammarRuleNames: testGrammarRuleNames,
             builtinFunctions,
-        }).handleServiceRequest(request, true) as any;
+        }).handleServiceRequest(request, true) as ICodeActionInfo[];
+
+        const resultTitles = result.map(r => r.title);
 
         it(`should give a correct code action result for script ${i} "${script}"`, () => {
-            expect(result).toEqual(expectedResult);
+            expect(resultTitles).toEqual(expectedResult);
         });
+        
         progressIndex++;
         progressBar.update(progressIndex);
     }

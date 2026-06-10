@@ -1,84 +1,43 @@
-import { CodeActionKind, ICodeActionResult, IRangeItem } from '../../../../CommonSqlUtils/Utils';
+import { IRangeItem } from '../../../../CommonSqlUtils/Utils';
 
 export interface ISqlCodeActionTestCase {
     script: string;
     range: IRangeItem;
-    expectedResult: ICodeActionResult[];
+    expectedResult: string[];
 }
 
-export const sqlCodeActionTestCases: ISqlCodeActionTestCase[] = [
-    {
-        script: "SELECT * FROM tableTest1;",
-        range: { startLineNumber: 1, startColumn: 1, endLineNumber: 1, endColumn: 1 },
-        expectedResult: [
-            {
-                kind: CodeActionKind.StarExpansion,
-                range: { startLineNumber: 1, startColumn: 8, endLineNumber: 1, endColumn: 9 },
-                text: "tableColumnTest1, tableColumnTest2",
-            },
-        ],
-    },
-    {
-        script: "SELECT * FROM tableTest2;",
-        range: { startLineNumber: 1, startColumn: 1, endLineNumber: 1, endColumn: 1 },
-        expectedResult: [],
-    },
-    {
-        script: `SELECT * FROM tableTest1;
-SELECT * FROM tableTest3;`,
-        range: { startLineNumber: 2, startColumn: 10, endLineNumber: 2, endColumn: 14 },
-        expectedResult: [
-            {
-                kind: CodeActionKind.StarExpansion,
-                range: { startLineNumber: 2, startColumn: 8, endLineNumber: 2, endColumn: 9 },
-                text: "tableColumnTest5, tableColumnTest6",
-            },
-        ],
-    },
-    {
-        script: "SELECT * FROM tableTest1;",
-        range: { startLineNumber: 1, startColumn: 20, endLineNumber: 1, endColumn: 25 },
-        expectedResult: [
-            {
-                kind: CodeActionKind.StarExpansion,
-                range: { startLineNumber: 1, startColumn: 8, endLineNumber: 1, endColumn: 9 },
-                text: "tableColumnTest1, tableColumnTest2",
-            },
-        ],
-    },
-    {
-        script: "SELECT * FROM tableTest1;",
-        range: { startLineNumber: 1, startColumn: 26, endLineNumber: 1, endColumn: 26 },
-        expectedResult: [],
-    },
-    {
-        script: `WITH t1 AS (SELECT * FROM tableTest1)
-SELECT * FROM t1;`,
-        range: { startLineNumber: 1, startColumn: 1, endLineNumber: 1, endColumn: 1 },
-        expectedResult: [],
-    },
-    {
-        script: `WITH t1 AS (SELECT * FROM tableTest1)
-SELECT * FROM t1;`,
-        range: { startLineNumber: 1, startColumn: 20, endLineNumber: 1, endColumn: 21 },
-        expectedResult: [
-            {
-                kind: CodeActionKind.StarExpansion,
-                range:  { startLineNumber: 1, startColumn: 20, endLineNumber: 1, endColumn: 21 },
-                text: "tableColumnTest1, tableColumnTest2",
-            },
-        ],
-    },
-    {
-        script: `WITH t1 AS (SELECT * FROM tableTest1)
-SELECT * FROM t1;`,
-        range: { startLineNumber: 2, startColumn: 9, endLineNumber: 2, endColumn: 9 },
-        expectedResult: [
-            {
-                kind: CodeActionKind.StarExpansion,
-                range: { startLineNumber: 2, startColumn: 8, endLineNumber: 2, endColumn: 9 },
-                text: "tableColumnTest1, tableColumnTest2",
-            },
-        ],
-    },
-];
+export const sqlCodeActionTestCases: ISqlCodeActionTestCase[] = [{
+    script: "SELECT table1_column1 FROM tableTest1",
+    range: { startLineNumber: 1, startColumn: 28, endLineNumber: 1, endColumn: 38 },
+    expectedResult: [
+        'Replace "tableTest1" with "table1"',
+        'Replace "tableTest1" with "table2"',
+        'Replace "tableTest1" with "table3"',
+        'Replace "tableTest1" with "table-4"',
+        'Replace "tableTest1" with "db1.schema1.table1"',
+    ],
+}, {    
+    script: "SELECT table1_column1 FROM [tableTest1]",
+    range: { startLineNumber: 1, startColumn: 29, endLineNumber: 1, endColumn: 39 },
+    expectedResult: [
+        'Replace "tableTest1" with "table1"',
+        'Replace "tableTest1" with "table2"',
+        'Replace "tableTest1" with "table3"',
+        'Replace "tableTest1" with "table-4"',
+        'Replace "tableTest1" with "db1.schema1.table1"',
+    ],
+}, {
+    script: "SELECT table1_column1 INTO output1 FROM table1",
+    range: { startLineNumber: 1, startColumn: 28, endLineNumber: 1, endColumn: 35 },
+    expectedResult: [
+        'Replace "output1" with "outputStream1"',
+        'Replace "output1" with "outputStream2"',
+    ],
+}, {
+    script: "SELECT table1_column1 INTO [output1] FROM table1",
+    range: { startLineNumber: 1, startColumn: 29, endLineNumber: 1, endColumn: 36 },
+    expectedResult: [
+        'Replace "output1" with "outputStream1"',
+        'Replace "output1" with "outputStream2"',
+    ],
+}];

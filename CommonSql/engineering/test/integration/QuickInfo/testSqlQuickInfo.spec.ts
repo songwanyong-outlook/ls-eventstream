@@ -9,7 +9,6 @@ import { testGrammarRuleNames } from '@engineering/common/SqlFakedConfig';
 import { GetMockMetadata } from "@engineering/test/common/MockSqlMetadataProvider";
 import { sqlQuickInfoTestCases } from './sqlQuickInfoTestCases';
 
-
 describe("test SQL QuickInfo", () => {
     const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
     progressBar.start(sqlQuickInfoTestCases.length);

@@ -26,3 +26,7 @@ test-*.xml
 */**/benchmark/result/
 CommonSql/coverage
 */**/test/coverage
+
+# Local Azure OpenAI secrets — never commit
+playground/.env.local
+playground/.env*.local

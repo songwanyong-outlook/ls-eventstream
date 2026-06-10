@@ -1,0 +1,43 @@
+{
+    "name": "monaco-playground",
+    "description": "monaco editor playground for language service.",
+    "version": "0.0.1",
+    "author": "Microsoft Corporation",
+    "license": "MIT",
+    "scripts": {
+        "auth": "vsts-npm-auth -config .npmrc",
+        "ls-test": "cross-env NODE_ENV=test npm start",
+        "ls-test-local": "npm run copy-worker-file && npm run ls-test",
+        "ls-debug": "npm run copy-worker-file && npm start",
+        "ls-prod": "cross-env NODE_ENV=production npm start",
+        "ls-prod-local": "npm run copy-worker-file && npm run ls-prod",
+        "copy-worker-file": "copyfiles -f ../CommonSql/CommonSqlCore/src/worker/dist/*.js ./src/language_service_worker",
+        "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --port 8000",
+        "build": "cross-env NODE_ENV=test node ./node_modules/webpack/bin/webpack.js --progress"
+    },
+    "devDependencies": {
+        "@fluentui/react": "8.63.1",
+        "@pmmmwh/react-refresh-webpack-plugin": "^0.5.1",
+        "@types/react": "^17.0.35",
+        "@types/react-dom": "^17.0.11",
+        "common-sql-language-service-facade": "0.1.4",
+        "copyfiles": "^2.1.1",
+        "cross-env": "^7.0.3",
+        "css-loader": "^6.5.1",
+        "file-loader": "^6.2.0",
+        "glob": "^7.2.0",
+        "html-webpack-plugin": "^5.5.0",
+        "monaco-editor": "0.33.0",
+        "node-polyfill-webpack-plugin": "^1.1.4",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-refresh": "^0.11.0",
+        "style-loader": "^3.3.1",
+        "ts-loader": "^9.2.6",
+        "typescript": "^4.4.4",
+        "webpack": "5.50.0",
+        "webpack-cli": "^4.9.1",
+        "webpack-dev-server": "4.7.2",
+        "worker-loader": "^3.0.8"
+    }
+}

@@ -1,0 +1,8 @@
+package-lock.json
+*.tgz
+.vscode/**/*
+tsconfig*.json
+src/**/*.ts
+*.js.map
+node_modules
+test

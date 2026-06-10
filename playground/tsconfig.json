@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "module": "es2020",
+        "moduleResolution": "node",
+        "target": "es6",
+        "outDir": "./dist",
+        "lib": ["es2018", "dom"],
+        "types": [],
+        "baseUrl": "./node_modules",
+        "jsx": "react",
+        "esModuleInterop": true,
+        "typeRoots": ["node_modules/@types"]
+    },
+    "include": ["./src/**/*"],
+    "exclude": ["node_modules"]
+}

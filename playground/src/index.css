@@ -1,0 +1,59 @@
+.Editor {
+    position: relative;
+    height: 900px;
+    border: 1px solid #ccc;
+}
+
+.MetadataEditor {
+    position: relative;
+    height: 856px;
+    border: 1px solid #ccc;
+}
+
+.Header {
+    background-color: #0078d4;
+    height: 60px;
+    line-height: 60px;
+    color: #ffffff;
+    font-size: 25px;
+    font-family: 'Segoe UI';
+    font-weight: 700;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    white-space: nowrap;
+    text-size-adjust: 100%;
+    text-align: center;
+}
+
+.CenterText {
+    text-align: center;
+    font-size: 14px;
+    display: block;
+    box-sizing: border-box;
+    line-height: 20px;
+}
+
+.ContextMenu .FeatureMenu {
+    height: 40px;
+    font-size: 16px;
+    font-family: 'Segoe UI';
+    font-weight: 800;
+    padding-top: 0px;
+    white-space: nowrap;
+    text-size-adjust: 100%;
+    text-align: center;
+    margin-bottom: 1px;
+    box-shadow: 0 7px 30px -10px rgba(150,170,180,0.5);
+}
+
+.OuterStackItemStyles {
+    border: 1px solid #ccc; 
+    margin-right: 1px;
+    width: fit-content;
+};
+
+.PreCardStackItemStyles {
+    border: 1px solid #ccc; 
+    margin-left: 1px;
+    width: fit-content;
+};

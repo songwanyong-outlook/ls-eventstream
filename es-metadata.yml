@@ -1,0 +1,12 @@
+schemaVersion: 1.0.0
+providers:
+- provider: InventoryAsCode
+  version: 1.0.0
+  metadata:
+    isProduction: true
+    routing:
+      defaultAreaPath:
+        org: powerbi
+        path: Trident\Shared Experience
+    consumingServices:
+    - e2ad10bb-4538-4610-9178-778db031d7ac

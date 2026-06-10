@@ -1,0 +1,6 @@
+dist
+lib
+logs
+*.log
+npm-debug.log*
+src/language_service_worker/*.js

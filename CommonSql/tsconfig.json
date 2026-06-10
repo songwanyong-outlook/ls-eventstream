@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "allowJs": false,
+        "target": "ES6",
+        "moduleResolution": "node",
+        "module": "ES2020",
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "baseUrl": ".",
+        "paths": {
+            "@CommonSqlCore/*": ["./CommonSqlCore/*"],
+            "@CommonSqlFacade/*": ["./CommonSqlFacade/*"],
+            "@CommonSqlUtils/*": ["./CommonSqlUtils/*"],
+            "@engineering/*": ["./engineering/*"]
+        }
+    },
+    "include": ["./engineering/**/*"],
+    "exclude": ["node_modules"]
+}

@@ -1,0 +1,11 @@
+package-lock.json
+*.tgz
+.vscode/**/*
+*.g4
+src/
+*.js.map
+node_modules
+tsconfig.json
+SqlParserLexer.js
+SqlParserParser.js
+SqlParserVisitor.js

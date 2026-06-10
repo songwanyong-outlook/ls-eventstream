@@ -1,0 +1,21 @@
+{
+    "author": "Microsoft Corporation",
+    "name": "common-sql-language-service-facade",
+    "version": "0.1.9",
+    "description": "language service facade for general sql language.",
+    "license": "MIT",
+    "repository": {
+        "type": "git"
+    },
+    "dependencies": {
+        "monaco-editor": "0.33.0"
+    },
+    "scripts": {
+        "auth": "vsts-npm-auth -c .npmrc -f",
+        "compile": "tsc -p ./tsconfig.json"
+    },
+    "keywords": [
+        "Common Sql",
+        "Language Service Facade"
+    ]
+}

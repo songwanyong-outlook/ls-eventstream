@@ -1,0 +1,27 @@
+{
+    "author": "Microsoft Corporation",
+    "name": "common-sql-language-service-ai",
+    "version": "0.1.0",
+    "description": "AI inline-completion provider (Azure OpenAI) for the Common SQL language service. Sits alongside CommonSqlFacade as the hybrid AI half of the language service.",
+    "license": "MIT",
+    "repository": { "type": "git" },
+    "main": "index.js",
+    "types": "index.d.ts",
+    "scripts": {
+        "compile": "tsc -p ./tsconfig.json"
+    },
+    "peerDependencies": {
+        "monaco-editor": ">=0.34.0"
+    },
+    "devDependencies": {
+        "monaco-editor": "0.52.0",
+        "typescript": "^4.9.5"
+    },
+    "keywords": [
+        "Common Sql",
+        "Language Service",
+        "AI",
+        "Azure OpenAI",
+        "Inline Completion"
+    ]
+}

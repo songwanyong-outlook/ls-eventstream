@@ -2,11 +2,17 @@
  * Azure OpenAI inline-completion provider for Monaco.
  *
  * Calls Azure OpenAI Chat Completions API through a same-origin proxy
- * (see vite.config.ts → server.proxy['/api/aoai']) so the API key never
- * touches the browser bundle.
+ * (the host wires the proxy in its build tool — see playground/webpack.config.js
+ * for an example). The API key never touches the browser bundle: the proxy
+ * injects it as an `api-key` HTTP header server-side.
  *
- * Designed for cheap models (gpt-4o-mini). One request per user pause,
- * client-side debounced. Returns a single inline completion item.
+ * Designed for cheap chat models (gpt-4o, gpt-4o-mini) and the gpt-5* /
+ * o*-reasoning families. One request per user pause, client-side debounced,
+ * cancellable.
+ *
+ * Recommended entry point: see `registerAiInlineCompletions` in the same
+ * module, which wraps this provider with an idle re-trigger so ghost text
+ * appears when the cursor pauses.
  */
 import type * as monaco from 'monaco-editor';
 

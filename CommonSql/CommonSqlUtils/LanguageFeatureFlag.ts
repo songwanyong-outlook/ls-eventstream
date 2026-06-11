@@ -30,24 +30,24 @@ export const EnableFormatting = true;
 /*
     Feature flag for goto definition before the feature is completely done.
 */
-export const EnableGotoDefinition = true;
+export const EnableGotoDefinition = false;
 
 /*
     Feature flag for goto reference before the feature is completely done.
 */
-export const EnableGotoReference = true;
+export const EnableGotoReference = false;
 
 /*
     Feature flag for code folding before the feature is completely done.
 */
-export const EnableFolding = true;
+export const EnableFolding = false;
 
 /*
     Feature flag for code action before the feature is completely done.
 */
-export const EnableCodeAction = false;
+export const EnableCodeAction = true;
 
 /*
     Feature flag for code lens before the feature is completely done.
 */
-export const EnableCodeLens = true;
+export const EnableCodeLens = false;

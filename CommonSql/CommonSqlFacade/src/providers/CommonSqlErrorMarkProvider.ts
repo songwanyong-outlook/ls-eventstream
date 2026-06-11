@@ -1,8 +1,10 @@
 import * as monaco from "monaco-editor";
+import { ISqlMetadata } from "../../../CommonSqlUtils/MetadataTypes";
 import { asyncSetErrorMarkerDelayTime, ILanguageServiceRequest, LanguageServiceFeature } from "../../../CommonSqlUtils/Utils";
 import { CommonSqlLanguageServiceFacade }  from "../CommonSqlLanguageServiceFacade";
 import { LanguageServiceConfig, TelemetryRecordFeature } from "../SqlUtils/ServiceProviderUtils";
 import { LSTelemetryClientProvider } from "../telemetry/LSTelemetryClientProvider";
+import { CommonSqlMetadataProvider } from "./CommonSqlMetadataProvider";
 
 interface ISqlErrorDetectionRequst {
     _model: monaco.editor.ITextModel;
@@ -29,6 +31,20 @@ export class CommonSqlErrorMarkerProvider {
         }
     }
 
+    public async DetectErrorsAsync(code: string, metadata: ISqlMetadata): Promise<monaco.editor.IMarkerData[]> {
+        const request: ILanguageServiceRequest = {
+            code: code,
+            metadata: metadata,
+            reason: LanguageServiceFeature.ErrorDetection,
+        };
+
+        const errors = await CommonSqlLanguageServiceFacade
+            .GetInstance(this.languageServiceConfig)
+            .GetLanguageServiceResult(request);
+
+        return errors as monaco.editor.IMarkerData[];
+    }
+    
     public setErrorMarkerAsync(model: monaco.editor.ITextModel, versionId: number): void {
         if (asyncSetErrorMarkerDelayTime <= 0) {
             this.setErrorMarker(model, versionId);
@@ -62,9 +78,12 @@ export class CommonSqlErrorMarkerProvider {
         const lsTelemetryClient = LSTelemetryClientProvider.getTelemetryClient(_model.getLanguageId());
         lsTelemetryClient?.recordLSRequest(TelemetryRecordFeature.ErrorDetection, _model.getVersionId());
 
+        const metadata: ISqlMetadata = CommonSqlMetadataProvider.getMetadata(this.languageServiceConfig);       
+
         const marks = await CommonSqlLanguageServiceFacade.GetInstance(this.languageServiceConfig).GetLanguageServiceResult({ 
-            code: input, 
+            code: input,             
             reason: LanguageServiceFeature.ErrorDetection,
+            metadata: metadata,
         } as ILanguageServiceRequest);
 
         if (versionId === this.latestContentVersionIdForErrorDetection && !_model.isDisposed()) {

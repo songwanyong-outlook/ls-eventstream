@@ -3,9 +3,7 @@ import { buildBuiltinFunctionMap } from "../../CommonSqlUtils/BulitinFunctionHel
 import { CommonSqlCompletionItem } from "../../CommonSqlUtils/CommonSqlCompletionItem";
 import { ISignatureHelp } from "../../CommonSqlUtils/SignatureTypes";
 import { 
-    CodeActionKind, 
-    CodeActionTitle, 
-    ICodeActionResult, 
+    ICodeActionInfo, 
     IDefinitionResult, 
     IErrorMarkItem, 
     IFoldingRange, 
@@ -21,7 +19,18 @@ import { UseSingleWorkerForAllLanguageServiceFeatures } from "../../CommonSqlUti
 import { LSPerformanceWatcher } from "./LanguageServicePerformanceWatcher";
 import { LanguageServiceConfig } from "./SqlUtils/ServiceProviderUtils";
 
-export type ParserResult = languages.CompletionList | editor.IMarkerData[] | languages.Hover | languages.SignatureHelpResult | languages.TextEdit[] | IDefinitionResult | string | languages.FoldingRange[] | languages.CodeActionList;
+export type ParserResult
+    = languages.CompletionList // word completion
+    | editor.IMarkerData[] // error detection
+    | languages.Hover // quick info
+    | languages.SignatureHelpResult // signature help
+    | string[] // output schema
+    | languages.TextEdit[] // auto format
+    | IDefinitionResult
+    | string
+    | languages.FoldingRange[]  // code folding
+    | languages.CodeActionList
+    ;
 
 interface ILanguageServiceResource {
     worker: Worker;
@@ -113,14 +122,14 @@ export class CommonSqlLanguageServiceFacade {
                 return 1;
             case LanguageServiceFeature.AutoFormat:
                 return 1;
-            case LanguageServiceFeature.GotoDefinition:
-                return 1;
-            case LanguageServiceFeature.GotoReferences:
-                return 1;
-            case LanguageServiceFeature.CodeFolding:
-                return 1;
             case LanguageServiceFeature.CodeAction:
                 return 1;
+            case LanguageServiceFeature.Custom:
+                return 1;
+            case LanguageServiceFeature.GotoDefinition:
+            case LanguageServiceFeature.GotoReferences:
+            case LanguageServiceFeature.CodeFolding:
+                return -1;  // unsupported
             default:
                 return -1;
         }
@@ -154,7 +163,7 @@ export class CommonSqlLanguageServiceFacade {
             }
             this.languageServiceResourceManagementPool.getResource(resourceId).processingRequest = null;
             this.SendPendingRequest(languageServiceRequest.reason);
-
+            
             // promise resolve.
             if (languageServiceRequest.reason === LanguageServiceFeature.WordCompletion) {
                 promiseResolve(this.DecorateCompletionItems(parseResults));
@@ -174,6 +183,8 @@ export class CommonSqlLanguageServiceFacade {
                 promiseResolve(this.DecorateFoldingRanges(parseResults));
             } else if (languageServiceRequest.reason === LanguageServiceFeature.CodeAction) {
                 promiseResolve(this.DecorateCodeActions(parseResults));
+            } else if (languageServiceRequest.reason === LanguageServiceFeature.Custom) {
+                promiseResolve(this.DecorateOutputSchema(parseResults));
             }
         };
 
@@ -181,26 +192,60 @@ export class CommonSqlLanguageServiceFacade {
         return result;
     }
 
-    protected DecorateErrorMarkItems(items: IErrorMarkItem[]): editor.IMarkerData[] {
-        const markers: editor.IMarkerData[] = [];
-        if (!items) {
-            return markers;
+    protected DecorateCompletionItems(items: CommonSqlCompletionItem[]): languages.CompletionList | string {
+        if (typeof items === 'string') {
+            return items;
         }
+        return mapToMonacoCompletionItemList(items);
+    }
+    
+    protected DecorateErrorMarkItems(items: IErrorMarkItem[]): editor.IMarkerData[] {
+        items = items ?? [];
 
-        for (const item of items) {
-            const mark: editor.IMarkerData = {
-                message : item.message,
-                startColumn : item.startColumn + 1,
-                endColumn : item.endColumn + 1,
-                startLineNumber : item.line,
-                endLineNumber : item.line,
-                severity : item.severity === Severity.Error ? MarkerSeverity.Error :
+        const markers: editor.IMarkerData[] = items.map(item => {
+            return {
+                message: item.message,
+                startColumn: item.startColumn + 1,
+                endColumn: item.endColumn + 1,
+                startLineNumber: item.line,
+                endLineNumber: item.line,
+                severity: item.severity === Severity.Error ? MarkerSeverity.Error :
                     (item.severity === Severity.Warning ? MarkerSeverity.Warning :
                         (item.severity === Severity.Hint ? MarkerSeverity.Hint : MarkerSeverity.Info)),
-            };
-            markers.push(mark);
-        }
+            } as editor.IMarkerData;
+        });
+
         return markers;
+    }
+
+    protected DecorateCodeActions(codeActionResults: ICodeActionInfo[]): languages.CodeActionList {
+        const codeActions: languages.CodeAction[] = codeActionResults.map(r => {
+            const workspaceTextEdit: languages.IWorkspaceTextEdit = {
+                resource: null, // fullfill in provider
+                versionId: null, // fullfill in provider
+                textEdit: {
+                    range:{
+                        startLineNumber: r.range.startLineNumber,
+                        endLineNumber: r.range.endLineNumber,
+                        startColumn: r.range.startColumn,
+                        endColumn: r.range.endColumn,
+                    },
+                    text: r.replaceText
+                } as languages.TextEdit,
+            };
+
+            return {
+                title: r.title,
+                edit: { 
+                    edits: [workspaceTextEdit],
+                } as languages.WorkspaceEdit,
+            } as languages.CodeAction;
+        });                
+        
+        return {
+            actions: codeActions,
+            dispose: () => {}, 
+        } as languages.CodeActionList;
     }
 
     protected DecorateHoverItem(documentationMarkdown: string): languages.Hover {
@@ -209,6 +254,10 @@ export class CommonSqlLanguageServiceFacade {
 
     protected DecorateFormattedText(formattedText: string): languages.TextEdit[] {
         return [{ text: formattedText, range: null } as languages.TextEdit];
+    }
+
+    protected DecorateOutputSchema(outputSchema: string[]): string[] {
+        return outputSchema ?? [];
     }
 
     protected DecorateFoldingRanges(foldingRanges: IFoldingRange[]): languages.FoldingRange[] {
@@ -306,55 +355,13 @@ export class CommonSqlLanguageServiceFacade {
         }, languageServiceFacadeInstanceExpireTime);
     }
 
-    protected DecorateCompletionItems(items: CommonSqlCompletionItem[]): languages.CompletionList | string {
-        if (typeof items === 'string') {
-            return items;
-        }
-        return mapToMonacoCompletionItemList(items);
-    }
-    
     protected DecorateDefinitionItem(result: IDefinitionResult): IDefinitionResult {
         return result;
     }
-    
+
     protected DecorateReferenceItems(name: string): string {
         // currently just return name of the metadataObejct
         return name;
-    }
-
-    protected DecorateCodeActions(codeActionResults: ICodeActionResult[]): languages.CodeActionList {
-        const codeActions: languages.CodeAction[] = [];
-        codeActionResults?.forEach(r => {
-            switch (r.kind) {
-                case CodeActionKind.StarExpansion:
-                    codeActions.push(this.createStarExpansionCodeAction(r));
-                    break;
-            }
-        });
-
-        return {
-            actions: codeActions,
-            dispose() {
-                // empty
-            }, 
-        } as languages.CodeActionList;
-    }
-
-    private createStarExpansionCodeAction(result: ICodeActionResult): languages.CodeAction {
-        const workspaceTextEdit = {
-            resource: null, // fullfill in provider
-            edit: { 
-                range: result.range, 
-                text: result.text 
-            } as languages.TextEdit,
-        } as languages.WorkspaceTextEdit;
-
-        return {
-            title: result.title ? result.title : CodeActionTitle.StarExpansion, 
-            edit: { 
-                edits: [workspaceTextEdit],
-            } as languages.WorkspaceEdit,
-        } as languages.CodeAction;
     }
 }
 

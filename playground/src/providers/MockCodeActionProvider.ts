@@ -2,11 +2,10 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------------------------
 
-import { CancellationToken, editor, languages, Range } from "monaco-editor";
+import { CancellationToken, editor, IRange, languages, Range } from "monaco-editor";
 import { ICodeActionRequestParameter, ILanguageServiceRequest, LanguageServiceFeature } from '../../../CommonSql/CommonSqlUtils/Utils';
-import { IsInSpecialContext, LanguageServiceConfig } from "../../../CommonSql/CommonSqlFacade/src/SqlUtils/ServiceProviderUtils";
+import { LanguageServiceConfig } from "../../../CommonSql/CommonSqlFacade/src/SqlUtils/ServiceProviderUtils";
 import { MockLanguageServiceFacade } from "../MockLanguageServiceFacade";
-
 
 export class MockCodeActionProvider {
     private languageServiceConfig: LanguageServiceConfig = null;
@@ -15,40 +14,58 @@ export class MockCodeActionProvider {
         this.languageServiceConfig = languageServiceConfig;
     }
 
-    async provideCodeActions(model: editor.ITextModel, range: Range, context: languages.CodeActionContext, token: CancellationToken): Promise<languages.CodeActionList> {
-        const partialRange = {
-            startLineNumber: 1,
-            startColumn: 1,
-            endLineNumber: range.endLineNumber,
-            endColumn: range.endColumn,
-        };
-        const partialScript = model.getValueInRange(partialRange);     // partial script for resolving expression
-        const script = model.getValue();                        // complete script for parsing
-
-        if (IsInSpecialContext(partialScript, model.getLanguageId())) {
-            return null;
+    async provideCodeActions(model: editor.ITextModel, range: Range, context: languages.CodeActionContext, token: CancellationToken)
+    : Promise<languages.CodeActionList> {
+        const fillinEdits = (edit: languages.IWorkspaceTextEdit): languages.IWorkspaceTextEdit => {
+            return {
+                resource: model.uri,
+                textEdit: {
+                    // property 'range' is IRange, input parameter 'range' is Range
+                    range: {
+                        startLineNumber: range.startLineNumber,
+                        startColumn: range.startColumn,
+                        endLineNumber: range.endLineNumber,
+                        endColumn: range.endColumn
+                    } as IRange,
+                    text:  edit.textEdit.text,
+                },
+                versionId: model.getVersionId()
+            };
         }
 
-        let metadata = null;
-        try {
-            metadata = this.languageServiceConfig.metadataDelegate();
-        } catch {
-            metadata = null;
-        }
+        if (context.markers.length > 0) {
+            let metadata = null;
+            try {
+                metadata = this.languageServiceConfig.metadataDelegate();
+            } catch {
+                metadata = null;
+            }
 
-        const codeActionParam: ICodeActionRequestParameter = { range };
-        const result = await MockLanguageServiceFacade.GetResultFromPipeline({
-            code: script,
-            metadata,
-            parameter: codeActionParam,
-            reason: LanguageServiceFeature.CodeAction,
-        } as ILanguageServiceRequest, this.languageServiceConfig) as languages.CodeActionList;
+            const request: ILanguageServiceRequest = {
+                code: model.getValue(),
+                metadata: metadata,
+                parameter: { range } as ICodeActionRequestParameter,
+                reason: LanguageServiceFeature.CodeAction,
+            }
 
-        result.actions.forEach(a => {
-            a.edit.edits.forEach(e => {
-                (e as languages.WorkspaceTextEdit).resource = model.uri;
+            const result = await MockLanguageServiceFacade.GetResultFromPipeline(request, this.languageServiceConfig) as languages.CodeActionList;
+
+            let newActions: languages.CodeAction[] = result.actions.map(action => {
+                return {
+                    title: action.title,
+                    diagnostics: context.markers,
+                    kind: "quickfix",
+                    edit: {
+                        edits: action.edit?.edits?.map(fillinEdits)
+                    },
+                    isPreferred: true
+                } as languages.CodeAction;
             });
-        });
-        return result;
+
+            return {
+                actions: newActions,
+                dispose: () => {}
+            };
+        }
     }
 }

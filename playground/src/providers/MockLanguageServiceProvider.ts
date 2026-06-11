@@ -1,16 +1,21 @@
-import * as monaco from "monaco-editor";
-import { getHighlightRule } from "../../../CommonSql/CommonSqlFacade/src/SqlUtils/MonarchRuleGenerator";
-import { LanguageServiceConfig } from "../../../CommonSql/CommonSqlFacade/src/SqlUtils/ServiceProviderUtils";
-import { CommonSqlInlayHintsProvider } from "../../../CommonSql/CommonSqlFacade/src/providers/CommonSqlInlayHintsProvider";
-import { MockCompletionProvider } from "./MockCompletionProvider";
-import { MockErrorMarkerProvider } from "./MockErrorMarkerProvider";
-import { MockHoverProvider } from "./MockHoverProvider";
-import { MockSignatureHelpProvider } from "./MockSignatureHelpProvider";
-import { MockFormattingProvider } from "./MockFormattingProvider";
-import { MockDefinitionProvider } from "./MockDefinitionProvider";
-import { MockReferenceProvider } from "./MockReferenceProvider";
-import { MockFoldingProvider } from "./MockFoldingProvider";
-import { MockCodeActionProvider } from "./MockCodeActionProvider";
+import * as monaco from 'monaco-editor';
+
+import {
+    getHighlightRule,
+} from '../../../CommonSql/CommonSqlFacade/src/SqlUtils/MonarchRuleGenerator';
+import {
+    LanguageServiceConfig,
+} from '../../../CommonSql/CommonSqlFacade/src/SqlUtils/ServiceProviderUtils';
+import { MockCodeActionProvider } from './MockCodeActionProvider';
+// import { CommonSqlInlayHintsProvider } from "../../../CommonSql/CommonSqlFacade/src/providers/CommonSqlInlayHintsProvider";
+import { MockCompletionProvider } from './MockCompletionProvider';
+import { MockDefinitionProvider } from './MockDefinitionProvider';
+import { MockErrorMarkerProvider } from './MockErrorMarkerProvider';
+import { MockFoldingProvider } from './MockFoldingProvider';
+import { MockFormattingProvider } from './MockFormattingProvider';
+import { MockHoverProvider } from './MockHoverProvider';
+import { MockReferenceProvider } from './MockReferenceProvider';
+import { MockSignatureHelpProvider } from './MockSignatureHelpProvider';
 
 export class CommonSqlLanguageServiceProvider {
     private static errorMarkerProvides: Map<string, MockErrorMarkerProvider> = new Map();
@@ -37,7 +42,7 @@ export class CommonSqlLanguageServiceProvider {
         _monaco.languages.registerReferenceProvider(_lName, new MockReferenceProvider(config));
         _monaco.languages.registerFoldingRangeProvider(_lName, new MockFoldingProvider(config));
         _monaco.languages.registerCodeActionProvider(_lName, new MockCodeActionProvider(config));
-        _monaco.languages.registerInlayHintsProvider(_lName, new CommonSqlInlayHintsProvider(config));
+        // _monaco.languages.registerInlayHintsProvider(_lName, new CommonSqlInlayHintsProvider(config));
 
         if (config.snippetConfig?.editor && config.snippetConfig?.snippets?.length > 0) {
             this.addSnippetAction(config.snippetConfig?.editor, completionProvider);

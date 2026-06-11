@@ -31,13 +31,8 @@ export const testGrammarRuleNames = {
         queryExpressionRule: 'query_expression',
         metadataNameRules: [
             { metadataType: IMetadataType.Table, rules: ['table_name', 'table_name_or_view_name'] } as IMetadataNameRule,
-            { metadataType: IMetadataType.StoredProcedure, rules: ['proc_name'] } as IMetadataNameRule,
             { metadataType: IMetadataType.View, rules: ['select_list', 'view_name', 'table_name_or_view_name'] } as IMetadataNameRule,
-            { metadataType: IMetadataType.TableFunction, rules: ['function_call'] } as IMetadataNameRule,
             { metadataType: IMetadataType.Schema, rules: ['schema_name'] } as IMetadataNameRule,
-            { metadataType: IMetadataType.User, rules: ['user_name'] } as IMetadataNameRule,
-            { metadataType: IMetadataType.Type, rules: ['data_type'] } as IMetadataNameRule,
-            { metadataType: IMetadataType.Index, rules: ['index_name'] } as IMetadataNameRule,
         ],
         columnNameRules: { 
             allColumns: ['select_list'], 
@@ -63,11 +58,6 @@ export const testGrammarRuleNames = {
             { ruleName: 'common_table_expression', metadataNameProperty: 'common_table_name', metadataType: IMetadataType.Table, childrenPropertyNames: ['column_children', 'column_children2'] } as ICreateMetadataRule,
             { ruleName: 'create_external_table', metadataNameProperty: 'name', metadataType: IMetadataType.Table, childrenPropertyNames: ['column_children', 'column_children2'] } as ICreateMetadataRule,
             { ruleName: 'create_schema_azure_sql_dw_and_pdw', metadataNameProperty: 'created_schema_name', metadataType: IMetadataType.Schema, childrenPropertyNames: [] } as ICreateMetadataRule,
-            { ruleName: 'create_user_azure_sql_dw', metadataNameProperty: 'created_user', metadataType: IMetadataType.User, childrenPropertyNames: [] } as ICreateMetadataRule,
-            { ruleName: 'create_type', metadataNameProperty: 'created_type_name', metadataType: IMetadataType.Type, childrenPropertyNames: [] } as ICreateMetadataRule,
-            { ruleName: 'create_index', metadataNameProperty: 'created_index_name', metadataType: IMetadataType.Index, childrenPropertyNames: [] } as ICreateMetadataRule,
-            { ruleName: 'create_procedure', metadataNameProperty: 'created_proc_name', metadataType: IMetadataType.StoredProcedure, childrenPropertyNames: [] } as ICreateMetadataRule,
-            { ruleName: 'alter_procedure', metadataNameProperty: 'created_proc_name', metadataType: IMetadataType.StoredProcedure, childrenPropertyNames: [] } as ICreateMetadataRule,
             { ruleName: 'create_function', metadataNameProperty: 'created_func_name', metadataType: IMetadataType.Function, childrenPropertyNames: [] } as ICreateMetadataRule,
         ],
         columnCollectionDefinitionRules: [

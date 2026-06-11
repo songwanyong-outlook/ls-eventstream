@@ -292,6 +292,7 @@ declare type GotoDefinitionDelegate = (metadataObjectName: string) => Promise<vo
 declare interface ISqlMetadata {
     objects: IMetadataObject[];
     defaultSchema: string;
+    outputNames?: string[];
 }
 
 declare interface ISignatureInformation {
@@ -397,4 +398,6 @@ declare enum TelemetryRecordFeature {
 declare class CommonSqlLanguageServiceProvider {
     public static InitializeLanguageServiceFeatures(config: LanguageServiceConfig): void;
     public static setErrorMarkerAsync(model: monaco.editor.ITextModel, versionId: number): void;
+    public static GetOutputSchemaAsync(code: string, metadata: ISqlMetadata): Promise<string[]>;
+    public static DetectErrorsAsync(code: string, metadata: ISqlMetadata): Promise<monaco.editor.IMarkerData[]>;     
 }

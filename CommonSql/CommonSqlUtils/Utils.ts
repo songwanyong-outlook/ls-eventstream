@@ -36,6 +36,13 @@ export interface IRangeItem {
     endColumn: number;
 }
 
+export interface ICodeActionInfo {
+    title: string;
+    replaceText: string;
+    range: IRangeItem;
+    endTokenIndex: number;
+}
+
 export function isRangeEqual(a: IRangeItem, b: IRangeItem) {
     return a.startLineNumber === b.startLineNumber && a.startColumn === b.startColumn &&
         a.endLineNumber === b.endLineNumber && a.endColumn === b.endColumn;
@@ -106,21 +113,6 @@ export interface ICodeActionRequestParameter {
 export interface IDefinitionResult {
     range: IRangeItem;
     metadataObjectName: string;
-}
-
-export interface ICodeActionResult {
-    kind: CodeActionKind;
-    range: IRangeItem;
-    text: string;
-    title?: string;
-}
-
-export enum CodeActionKind {
-    StarExpansion = 'starExpansion',
-}
-
-export enum CodeActionTitle {
-    StarExpansion = 'Expand * to columns',
 }
 
 export const LoadMetadataCommand = {

@@ -145,7 +145,13 @@ export class CSLSFormatService {
             }
             this.commentIndex = 0;
             const formatTree = this.generateFormatTree(node);
-            return this.formatAST(formatTree);
+            let result = this.formatAST(formatTree);
+
+            if (result.endsWith(NEWLINE)) {
+                result = result.slice(0, -NEWLINE.length);
+            }
+
+            return result;
         } catch (e) {
             return this.script;
         }
@@ -317,8 +323,8 @@ export class CSLSFormatService {
                     children.push({
                         content: this.script.slice(token.startIndex, token.stopIndex + 1),
                         type: token.channel === this.blockCommentChannel ? ICommentNodeType.BLOCK_COMMENT : ICommentNodeType.LINE_COMMENT,
-                        startWithNewLine: token.line !== commentToken.before.line,
-                        endWithNewLine: token.line !== commentToken.after.line,
+                        startWithNewLine: !!commentToken.before && commentToken.before.line != token.line,
+                        endWithNewLine: commentToken.after.line != token.line,
                     });
                     this.commentIndex++;
                 }

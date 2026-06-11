@@ -2,7 +2,7 @@ import { editor, IMarkdownString, languages, MarkerSeverity } from "monaco-edito
 import { buildBuiltinFunctionMap } from "../../CommonSql/CommonSqlUtils/BulitinFunctionHelpers";
 import { CommonSqlCompletionItem } from "../../CommonSql/CommonSqlUtils/CommonSqlCompletionItem";
 import { ISignatureHelp } from "../../CommonSql/CommonSqlUtils/SignatureTypes";
-import { CodeActionKind, CodeActionTitle, ICodeActionResult, IDefinitionResult, IErrorMarkItem, IFoldingRange, ILanguageServiceRequest, IRangeItem, LanguageServiceFeature, Severity } from '../../CommonSql/CommonSqlUtils/Utils';
+import { ICodeActionInfo, IDefinitionResult, IErrorMarkItem, IFoldingRange, ILanguageServiceRequest, LanguageServiceFeature, Severity } from '../../CommonSql/CommonSqlUtils/Utils';
 import { CommonSqlLanguageServicePipeline } from '../../CommonSql/CommonSqlCore/src/pipeline/CommonSqlLanguageServicePipeline';
 import { mapToMonacoCompletionItemList } from "../../CommonSql/CommonSqlFacade/src/SqlUtils/MonacoCompletiomItemGenerator";
 import { LanguageServiceConfig } from "../../CommonSql/CommonSqlFacade/src/SqlUtils/ServiceProviderUtils";
@@ -128,44 +128,30 @@ export class MockLanguageServiceFacade {
         return name;
     }
 
-    protected static DecorateCodeActions(codeActionResults: ICodeActionResult[]): languages.CodeActionList {
-        const codeActions: languages.CodeAction[] = [];
-        if (codeActionResults) {
-            codeActionResults.forEach(r => {
-                switch (r.kind) {
-                    case CodeActionKind.StarExpansion:
-                        codeActions.push(this.createStarExpansion(r));
-                        break;
-                    default:
-                        codeActions.push(this.createCodeAction(r.range, r.title, r.text));
-                }
-            });
-        }
+    protected static DecorateCodeActions(codeActionResults: ICodeActionInfo[]): languages.CodeActionList {
+        const codeActions: languages.CodeAction[] = codeActionResults.map(r => {
+            const workspaceTextEdit: languages.IWorkspaceTextEdit = {
+                resource: null, // fullfill in provider
+                textEdit: {
+                    range: r.range,
+                    text: r.replaceText
+                } as languages.TextEdit,
+                versionId: null, // fullfill in provider
+            };
+
+            return {
+                title: r.title,
+                edit: { 
+                    edits: [workspaceTextEdit],
+                } as languages.WorkspaceEdit,
+            } as languages.CodeAction;
+        });                
+        
         return {
             actions: codeActions,
             dispose() {
                 // empty
             }, 
         } as languages.CodeActionList;
-    }
-
-    private static createStarExpansion(result: ICodeActionResult): languages.CodeAction {
-        const range = result.range;
-        const title = result.title ? result.title : CodeActionTitle.StarExpansion;
-        const replaceText = result.text;
-        return this.createCodeAction(range, title, replaceText);
-    }
-
-    private static createCodeAction(range: IRangeItem, title: string, replaceText: string): languages.CodeAction {
-        return {
-            title, edit: {
-                edits: [
-                    {
-                        resource: null,
-                        edit: { range, text: replaceText } as languages.TextEdit,
-                    },
-                ] as  languages.WorkspaceTextEdit[],
-            } as languages.WorkspaceEdit,
-        } as languages.CodeAction;
     }
 }

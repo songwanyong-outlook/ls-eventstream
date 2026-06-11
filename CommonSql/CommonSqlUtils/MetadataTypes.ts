@@ -9,6 +9,7 @@ export type GotoDefinitionDelegate = (metadataObjectName: string) => Promise<voi
 export interface ISqlMetadata {
     objects: IMetadataObject[];
     defaultSchema: string;
+    outputNames?: string[];
 }
 
 // this is the metadata format which we got via external delegation function
@@ -37,7 +38,7 @@ export enum IMetadataType {
     Table = "Table",
     Function = "Function",
     StoredProcedure = "StoredProcedure",
-    View = "View",
+    View = "TempTable",
     TableFunction = "TableFunction",
     User = "User",
     Type = "Type",

@@ -52,8 +52,23 @@ Write-Ok "Subscription : $($account.name) ($($account.id))"
 Write-Ok "Signed-in as : $($account.user.name)"
 
 if (-not $ResourceName) {
-    $hash = -join ((48..57) + (97..122) | Get-Random -Count 6 | ForEach-Object { [char]$_ })
-    $ResourceName = "aoai-tsql-ai-$hash"
+    # Re-runs without -ResourceName should NOT create a second account.
+    # Look for an existing AOAI account in the target resource group (any
+    # account name beginning with "aoai-tsql-ai-") and reuse it. Only mint
+    # a fresh random suffix if nothing matches.
+    $rgExists = az group show --name $ResourceGroup -o json 2>$null
+    if ($rgExists) {
+        $candidates = az cognitiveservices account list -g $ResourceGroup `
+            --query "[?kind=='OpenAI' && starts_with(name, 'aoai-tsql-ai-')].name" -o tsv 2>$null
+        if ($candidates) {
+            $ResourceName = ($candidates -split "`r?`n" | Select-Object -First 1).Trim()
+            Write-Ok "Reusing existing account: $ResourceName"
+        }
+    }
+    if (-not $ResourceName) {
+        $hash = -join ((48..57) + (97..122) | Get-Random -Count 6 | ForEach-Object { [char]$_ })
+        $ResourceName = "aoai-tsql-ai-$hash"
+    }
 }
 
 # --- Provider registration (silent if already registered) ---
@@ -143,7 +158,7 @@ Write-Host "  cd $repoRoot"
 Write-Host "  cd playground && npm run ls-prod-local"
 Write-Host "  # open http://localhost:8000/, click into the editor, idle ~1s -> AI ghost text appears"
 Write-Host ""
-Write-Host "Estimated cost: ~`$0.0001 / completion (gpt-4o-mini). 10k completions ~ `$1."
+Write-Host "Estimated cost: ~`$0.0008 / completion (gpt-4o). 10k completions ~ `$8."
 
 
 

@@ -30,3 +30,7 @@ CommonSql/coverage
 # Local Azure OpenAI secrets — never commit
 playground/.env.local
 playground/.env*.local
+
+CommonSql/CommonSqlAI/dist/
+CommonSql/CommonSqlAI/node_modules/
+CommonSql/CommonSqlAI/package-lock.json
